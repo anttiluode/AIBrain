@@ -254,6 +254,8 @@ def plot_report(report, path):
     ax.legend(fontsize=8)
     fig.suptitle('AIBrain Gate 1: connection memory versus ordinary association memories', fontsize=14)
     fig.savefig(path)
+    svg_path = Path(path)
+    svg_path.write_text('\n'.join(line.rstrip() for line in svg_path.read_text(encoding='utf-8').splitlines()) + '\n', encoding='utf-8')
     plt.close(fig)
 
 

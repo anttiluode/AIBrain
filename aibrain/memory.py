@@ -18,13 +18,24 @@ def vector(x, size=None):
 def split(x):
     """Return the scalar common mode and exact zero-mean residue."""
     a = vector(x)
-    core = float(a.mean())
-    return core, a - core
+    scale = float(np.max(np.abs(a)))
+    core = float((a / scale).mean() * scale) if scale else 0.
+    with np.errstate(over='ignore', invalid='ignore'):
+        residue = a - core
+    if not np.isfinite(residue).all():
+        raise ValueError('split residue exceeds the finite numeric range')
+    return core, residue
 
 
 def cue(x, centered=True):
     """Unit-norm query; a constant centered cue contains no identity."""
-    a = split(x)[1] if centered else vector(x)
+    a = vector(x)
+    scale = float(np.max(np.abs(a)))
+    if not scale:
+        return np.zeros_like(a)
+    a = a / scale  # normalization is scale invariant; avoid sum/norm overflow
+    if centered:
+        a = a - a.mean()
     norm = float(np.linalg.norm(a))
     return a / norm if norm > 1e-12 else np.zeros_like(a)
 
@@ -40,9 +51,12 @@ class MemoryBase:
         x, v = vector(x, self.dim), vector(v, self.values)
         if (x < 0).any() or (x > 1).any():
             raise ValueError('write key must be in [0,1]')
-        if (v < 0).any() or not np.isclose(v.sum(), 1, atol=1e-8):
+        if (v < 0).any() or (v > 1 + 1e-8).any():
             raise ValueError('observed value must be a probability vector')
-        return x, v
+        total = float(v.sum())
+        if abs(total - 1) > 1e-8:
+            raise ValueError('observed value must be a probability vector')
+        return x, v / total  # tolerance must never create conductance above one
 
     def query(self, x, centered=True):
         return cue(vector(x, self.dim), centered=centered)

@@ -71,6 +71,24 @@ class MemoryTests(unittest.TestCase):
             expected = 4 * (16 + 4) * 4 if cls is HistoryAttention else 16 * 4 * 4
             self.assertEqual(m.state_bytes, expected)
 
+    def test_large_finite_cues_remain_finite_and_constant_cues_are_zero(self):
+        for cls in (ConnectionMemory, HebbianMemory, DeltaMemory, HistoryAttention):
+            m = cls(16, 4)
+            m.write(self.keys[0], self.values[0])
+            np.testing.assert_array_equal(m.read(np.full(16, 1e308)), np.zeros(4))
+            self.assertTrue(np.isfinite(m.read(np.array([1e308, -1e308] * 8))).all())
+        core, residue = split(np.full(16, 1e308))
+        self.assertEqual(core, 1e308)
+        np.testing.assert_array_equal(residue, np.zeros(16))
+
+    def test_probability_tolerance_cannot_create_unbounded_conductance(self):
+        m = ConnectionMemory(16, 4)
+        with self.assertRaises(ValueError):
+            m.write(self.keys[0], [1.000009, 0, 0, 0])
+        for _ in range(64):
+            m.write(self.keys[0], [1.000000009, 0, 0, 0])
+        self.assertLessEqual(m.weights.max(), 1)
+
     def test_bad_input_is_rejected_before_memory_changes(self):
         for cls in (ConnectionMemory, HebbianMemory, DeltaMemory, HistoryAttention):
             with self.assertRaises(ValueError):

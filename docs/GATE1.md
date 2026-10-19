@@ -46,6 +46,15 @@ The graph has a unique convex equilibrium, not spontaneously discovered object
 basins. The energy descent implementation uses 80 preconditioned steps; the
 benchmark uses the mathematically equivalent direct solution.
 
+## Input behavior
+
+Write keys must be finite vectors in [0,1] of the configured dimension. Values
+must be nonnegative probability vectors; sums within absolute tolerance 1e-8
+are normalized to one so repeated writes cannot exceed the conductance bound.
+Queries accept finite signed cues and scale before normalization to avoid overflow.
+Constant centered cues yield zero scores. The standalone split rejects a residue
+whose range cannot be represented by finite float64 numbers.
+
 ## Comparison rules
 
 | Method | Write/read rule | Persistent numeric state |
@@ -148,3 +157,5 @@ python -m aibrain.benchmark --output runs/gate1
 
 [Complete checked-in receipts](gate1_metrics.json) · [Figure](gate1.svg) ·
 [Original design](superpowers/specs/2026-10-19-queryable-memory-design.md)
+
+[Verification record and remaining browser QA limitation](VERIFICATION.md)

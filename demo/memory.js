@@ -10,11 +10,16 @@
   }
   function split(x) {
     const a = vector(x);
-    const core = a.reduce((s,v)=>s+v,0)/a.length;
-    return {core, residue:a.map(v=>v-core)};
+    const scale = Math.max(...a.map(Math.abs));
+    const core = scale ? a.reduce((s,v)=>s+v/scale/a.length,0)*scale : 0;
+    const residue = a.map(v=>v-core);
+    if(!residue.every(Number.isFinite))throw Error('split residue exceeds finite numeric range');
+    return {core, residue};
   }
   function cue(x) {
-    const r = split(x).residue;
+    const a = vector(x), scale = Math.max(...a.map(Math.abs));
+    if(!scale)return a.map(()=>0);
+    const r = split(a.map(v=>v/scale)).residue;
     const norm = Math.sqrt(r.reduce((s,v)=>s+v*v,0));
     return norm>1e-12 ? r.map(v=>v/norm) : r.map(()=>0);
   }
@@ -28,7 +33,10 @@
     write(x,v) {
       x=vector(x,this.dim);v=vector(v,this.values);
       if(x.some(a=>a<0||a>1))throw Error('write key must be in [0,1]');
-      if(v.some(a=>a<0)||Math.abs(v.reduce((s,a)=>s+a,0)-1)>1e-8)throw Error('value must be a probability vector');
+      if(v.some(a=>a<0||a>1+1e-8))throw Error('value must be a probability vector');
+      const total=v.reduce((s,a)=>s+a,0);
+      if(Math.abs(total-1)>1e-8)throw Error('value must be a probability vector');
+      v=v.map(a=>a/total);
       for(let i=0;i<this.dim;i++)for(let j=0;j<this.values;j++) {
         const index=i*this.values+j, rate=this.eta*x[i];
         this.weights[index]=(1-rate)*this.weights[index]+rate*v[j];

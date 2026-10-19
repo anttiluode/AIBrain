@@ -25,33 +25,40 @@ Files: aibrain/memory.py, aibrain/baselines.py, tests/test_memory.py.
 Interfaces: split(x)->(float,array); ConnectionMemory.write(x,v), read(x),
 relax(x,steps=80)->(array,energy_trace), clear_activity(), erase(), state_bytes.
 Baselines: HebbianMemory, DeltaMemory, HistoryAttention with write/read/state_bytes.
-- [ ] Write failing unittest cases for reconstruction, association recall, matched
+- [x] Write failing unittest cases for reconstruction, association recall, matched
   pooling, persistent writes, destructive erasure, energy descent, direct/iterative
   equality, byte budgets, empty cues and invalid inputs.
-- [ ] Run unittest and inspect missing implementation failure.
-- [ ] Implement block and baselines, then run full suite.
-- [ ] Commit working primitive.
+- [x] Run unittest and inspect missing implementation failure.
+- [x] Implement block and baselines, then run full suite.
+- [x] Commit working primitive.
 
 ### Task 2: Held-out experiment
 Files: aibrain/benchmark.py, tests/test_benchmark.py, requirements.txt.
 Interfaces: episode(seed,load,dim=64,values=8); run_benchmark(seeds,episodes,loads)
 returns JSON-serializable receipts, paired metrics, rewrite and mechanism gates.
-- [ ] Write failing reproducibility, balanced-data, disjoint corruption, budget,
+- [x] Write failing reproducibility, balanced-data, disjoint corruption, budget,
   no-evaluation-write and changed/retained-truth tests.
-- [ ] Run failing tests; implement exact protocol from spec.
-- [ ] Run suite and full benchmark; preserve per-seed receipts.
-- [ ] Generate docs/gate1.svg from results; commit experiment.
+- [x] Run failing tests; implement exact protocol from spec.
+- [x] Run suite and full benchmark; preserve per-seed receipts.
+- [x] Generate docs/gate1.svg from results; commit experiment.
 
 ### Task 3: Visual demo and documentation
 Files: demo/index.html, demo/memory.js, tests/test_demo.mjs,
 README.md, docs/GATE1.md, .github/workflows/test.yml.
 Interfaces: JS module exported for Node tests and browser; same writer/read as Python.
-- [ ] Write failing cross-language numerical parity test using Python fixtures.
-- [ ] Implement offline cue/write/query controls and connection heatmap.
-- [ ] Run Node parity tests and Python suite; inspect screenshot if available.
-- [ ] Document actual results, commands, limitations and links; commit.
+- [x] Write failing cross-language numerical parity test using Python fixtures.
+- [x] Implement offline cue/write/query controls and connection heatmap.
+- [x] Run Node parity tests and Python suite; inspect screenshot if available.
+- [x] Document actual results, commands, limitations and links; commit.
 
 ### Task 4: Review and delivery
-- [ ] Review whole diff against spec; fix material findings with regression tests.
-- [ ] Run full Python and Node tests, benchmark reproduction and whitespace check.
-- [ ] Push feature branch and create reviewable pull request in AIBrain only.
+- [x] Review whole diff against spec; fix material findings with regression tests.
+- [x] Run full Python and Node tests, benchmark reproduction and whitespace check.
+- [x] Push feature branch and create reviewable pull request in AIBrain only.
+
+
+## Completion record
+Implemented in a fresh dedicated checkout and feature branch. The user authorized
+building and measuring this experiment; execution proceeded inline. Whole-branch
+independent review completed; two numeric input defects were fixed with failing
+regressions first. See docs/VERIFICATION.md for checks and browser QA limitation.
