@@ -133,6 +133,9 @@ def run_benchmark(seeds=None, episodes=20, loads=None):
                 keys, labels = episode(derived, load)
                 models = trained(keys, labels)
                 m = models['connection']
+                frozen = ConnectionMemory()  # never receives the observations
+                erased = copy.deepcopy(m)
+                erased.erase()
                 rng = np.random.default_rng(derived + 1)
                 for swaps in (0, 1, 3):
                     queries = corrupt(keys, swaps, rng)
@@ -146,8 +149,9 @@ def run_benchmark(seeds=None, episodes=20, loads=None):
                     shuffled = queries[rng.permutation(load)]
                     scores['shuffled'] = evaluate(m, shuffled, labels)
                     # Constant output: all keys have equal pooled scalar and balanced labels.
-                    for name in ('pooled', 'erased', 'frozen'):
-                        scores[name] = float(np.mean(labels == 0))
+                    scores['pooled'] = float(np.mean(labels == 0))
+                    scores['erased'] = evaluate(erased, queries, labels)
+                    scores['frozen'] = evaluate(frozen, queries, labels)
                     for name, accuracy in scores.items():
                         totals.setdefault((swaps, name), []).append(accuracy)
             for (swaps, method), acc in totals.items():
