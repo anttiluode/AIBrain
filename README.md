@@ -16,7 +16,7 @@ discovery.**
 
 ## Try it
 
-Clone or download this branch. Open **[`demo/index.html`](demo/index.html)** in a
+Clone or download this branch. Open **[demo/index.html!](demo/index.html)** in a
 browser. No server or installation is needed for the interactive demo.
 
 1. Pick an example cue, swap a bit, and **Ping / query**.
