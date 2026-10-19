@@ -1,5 +1,7 @@
 # AIBrain — an experience changes the next answer
 
+Part of monday madness - 8 repos mostly consolidated to Sihtibrain. 
+
 **Observe a pattern → write local connections → ask with a partial cue → read the response.**
 
 This is the AI version of the small core behind the SihtiBrain experiments:
